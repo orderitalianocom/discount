@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -959,7 +959,7 @@ footer{
   </p>
 
   <p class="offer">
-    আপনার জন্য বিশেষ অফার
+    A special offer for you
   </p>
 
 </div>
@@ -1062,18 +1062,18 @@ footer{
   <div class="modal-card">
 
     <p class="modal-title">
-      চরকা ঘোরানোর আগে
+      Before spinning the wheel
     </p>
 
     <p class="modal-subtitle">
-      আপনার নাম ও নাম্বার দিন
+      Please enter your name and number
     </p>
 
     <input
       type="text"
       id="customerNameInput"
       class="modal-input"
-      placeholder="আপনার নাম"
+      placeholder="Your name"
       autocomplete="off"
     >
 
@@ -1081,7 +1081,7 @@ footer{
       type="tel"
       id="customerNumberInput"
       class="modal-input"
-      placeholder="মোবাইল নাম্বার"
+      placeholder="Mobile number"
       inputmode="numeric"
       autocomplete="off"
     >
@@ -1552,7 +1552,7 @@ const nameDoneBtn =
 
 
 const N8N_WEBHOOK_URL =
-  'https://2148-1435.n8nbysnbd.top/webhook-test/discountproject';
+  'https://2148-1435.n8nbysnbd.top/webhook/discountproject';
 
 let customerName = '';
 let customerNumber = '';
@@ -1768,7 +1768,7 @@ function handleDoneClick(){
 
   if(!nameVal || !numberVal){
     modalError.textContent =
-      'নাম এবং নাম্বার দুটোই দিতে হবে';
+      'Both name and number are required';
     return;
   }
 
@@ -1994,7 +1994,7 @@ function startSpin(){
             '🎉';
 
           text =
-            'অভিনন্দন! ১০০% জ্যাকপট!';
+            'Congratulations! 100% JACKPOT!';
 
           extraClass =
             'jackpot';
@@ -2007,7 +2007,7 @@ function startSpin(){
             '😔';
 
           text =
-            'এবার হলো না, আবার চেষ্টা করুন';
+            'Not this time, try again';
 
           extraClass =
             'badluck';
@@ -2024,7 +2024,7 @@ function startSpin(){
             '🎁';
 
           text =
-            `আপনি পেয়েছেন ${discount} ছাড়!`;
+            `You got ${discount} discount!`;
 
           extraClass =
             null;
