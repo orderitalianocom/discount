@@ -2058,18 +2058,27 @@ function startSpin(){
         }
 
 
+        const webhookParams =
+          new URLSearchParams();
+
+        webhookParams.append(
+          'name', customerName
+        );
+
+        webhookParams.append(
+          'number', customerNumber
+        );
+
+        webhookParams.append(
+          'discount',
+          seg.label.split('\n')[0]
+        );
+
         fetch(
           N8N_WEBHOOK_URL,
           {
             method:'POST',
-            headers:{
-              'Content-Type':'application/json'
-            },
-            body: JSON.stringify({
-              name: customerName,
-              number: customerNumber,
-              discount: seg.label.split('\n')[0]
-            })
+            body: webhookParams
           }
         ).catch(()=>{});
 
