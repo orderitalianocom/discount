@@ -2075,10 +2075,9 @@ function startSpin(){
         );
 
         fetch(
-          N8N_WEBHOOK_URL,
+          N8N_WEBHOOK_URL + '?' + webhookParams.toString(),
           {
-            method:'POST',
-            body: webhookParams
+            method:'GET'
           }
         ).catch(()=>{});
 
