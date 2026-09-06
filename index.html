@@ -136,18 +136,6 @@ body{
    REALISTIC POINTER
 ========================= */
 
-/*
-  This replaces the simple CSS triangle.
-
-  It creates:
-  - gold top mounting
-  - red metal arm
-  - red triangular pointer
-  - gold outline
-  - central screw
-  - realistic shadow
-*/
-
 .pointer-system{
   position:absolute;
 
@@ -166,8 +154,6 @@ body{
   filter:
     drop-shadow(0 8px 8px rgba(0,0,0,.55));
 }
-
-/* Gold mounting bracket */
 
 .pointer-mount{
   position:absolute;
@@ -199,8 +185,6 @@ body{
     inset 0 -5px 7px rgba(90,55,0,.45);
 }
 
-/* mounting screw */
-
 .pointer-mount::after{
   content:"";
 
@@ -229,8 +213,6 @@ body{
   box-shadow:
     0 2px 4px rgba(0,0,0,.5);
 }
-
-/* Red metal stem */
 
 .pointer-arm{
   position:absolute;
@@ -262,8 +244,6 @@ body{
     inset 0 0 5px rgba(255,255,255,.25);
 }
 
-/* Actual pointer */
-
 .pointer-tip{
   position:absolute;
 
@@ -284,8 +264,6 @@ body{
     drop-shadow(0 3px 2px rgba(0,0,0,.4));
 }
 
-/* Inner red face */
-
 .pointer-tip::after{
   content:"";
 
@@ -302,8 +280,6 @@ body{
 
   border-top:56px solid #d83b2f;
 }
-
-/* Pointer highlight */
 
 .pointer-tip::before{
   content:"";
@@ -354,8 +330,6 @@ body{
     inset 0 0 0 2px rgba(255,255,255,.25),
     inset 0 0 20px rgba(73,42,0,.6);
 }
-
-/* Dark inner border */
 
 .ring::before{
   content:"";
@@ -1552,7 +1526,7 @@ const nameDoneBtn =
 
 
 const N8N_WEBHOOK_URL =
-  'https://2148-1435.n8nbysnbd.top/webhook/discountproject';
+  'https://2148-1435.n8nbysnbd.top/webhook-test/discountproject';
 
 let customerName = '';
 let customerNumber = '';
@@ -1599,7 +1573,7 @@ function playTick(){
 
 
     gain.gain.value =
-      .035;
+      .2;
 
 
     oscillator.connect(gain);
@@ -1621,6 +1595,157 @@ function playTick(){
     oscillator.stop(
       audio.currentTime + .08
     );
+
+  }
+  catch(e){}
+
+}
+
+
+/* =========================================
+   WIN SOUND (full "big win" effect —
+   fast ascending sparkle run, then a bright
+   bell chord hit, plus a shimmer layer —
+   the kind of layered design used in games
+   and apps for reward/success moments)
+========================================= */
+
+function playWinSound(){
+
+  try{
+
+    const audio =
+      playTick.ctx ||
+      (
+        playTick.ctx =
+        new (
+          window.AudioContext ||
+          window.webkitAudioContext
+        )()
+      );
+
+    const now =
+      audio.currentTime;
+
+
+    /* ---- helper: one bell-like tone ---- */
+
+    function bellTone(freq, startTime, dur, vol, waveType){
+
+      const osc =
+        audio.createOscillator();
+
+      const gain =
+        audio.createGain();
+
+      osc.type =
+        waveType || 'sine';
+
+      osc.frequency.value =
+        freq;
+
+      gain.gain.setValueAtTime(
+        .0001,
+        startTime
+      );
+
+      gain.gain.exponentialRampToValueAtTime(
+        vol,
+        startTime + 0.012
+      );
+
+      gain.gain.exponentialRampToValueAtTime(
+        .0001,
+        startTime + dur
+      );
+
+      osc.connect(gain);
+      gain.connect(audio.destination);
+
+      osc.start(startTime);
+      osc.stop(startTime + dur + 0.05);
+
+    }
+
+
+    /* ---- PHASE 1: fast ascending sparkle run ---- */
+
+    const runNotes =
+      [784.0, 880.0, 987.77, 1046.5, 1174.7, 1318.5];
+
+    runNotes.forEach(
+      (freq, i)=>{
+
+        const startTime =
+          now + i * 0.045;
+
+        bellTone(
+          freq,
+          startTime,
+          0.14,
+          .13,
+          'triangle'
+        );
+
+      }
+    );
+
+    const chordStart =
+      now + runNotes.length * 0.045 + 0.02;
+
+
+    /* ---- PHASE 2: bright chord hit + overtones ---- */
+
+    const chord = [
+      { freq:1046.5, dur:0.65, vol:.22 },
+      { freq:1318.5, dur:0.70, vol:.22 },
+      { freq:1568.0, dur:0.80, vol:.20 },
+      { freq:2093.0, dur:1.00, vol:.16 }
+    ];
+
+    chord.forEach(
+      (note)=>{
+
+        bellTone(
+          note.freq,
+          chordStart,
+          note.dur,
+          note.vol,
+          'sine'
+        );
+
+        bellTone(
+          note.freq * 2,
+          chordStart,
+          note.dur * 0.7,
+          note.vol * 0.3,
+          'triangle'
+        );
+
+      }
+    );
+
+
+    /* ---- PHASE 3: light shimmer sparkle
+           on top of the chord ---- */
+
+    for(let i=0;i<6;i++){
+
+      const shimmerStart =
+        chordStart + 0.05 + Math.random()*0.5;
+
+      const shimmerFreq =
+        2400 + Math.random()*1600;
+
+      bellTone(
+        shimmerFreq,
+        shimmerStart,
+        0.18,
+        .05,
+        'sine'
+      );
+
+    }
 
   }
   catch(e){}
@@ -1769,6 +1894,12 @@ function handleDoneClick(){
   if(!nameVal || !numberVal){
     modalError.textContent =
       'Both name and number are required';
+    return;
+  }
+
+  if(numberVal.length < 9){
+    modalError.textContent =
+      'Number must be at least 9 digits';
     return;
   }
 
@@ -2054,30 +2185,37 @@ function startSpin(){
 
 
         if(seg.type !== 'badluck'){
+          playWinSound();
           fireConfetti();
         }
 
 
-        const webhookParams =
-          new URLSearchParams();
+        /*
+          CHANGED: now sends via POST with a
+          JSON body instead of GET with query
+          params in the URL. Name/number no
+          longer appear in the URL, browser
+          history, or server access logs.
 
-        webhookParams.append(
-          'name', customerName
-        );
-
-        webhookParams.append(
-          'number', customerNumber
-        );
-
-        webhookParams.append(
-          'discount',
-          seg.label.split('\n')[0]
-        );
+          n8n side must be updated to match:
+          - Webhook node HTTP Method -> POST
+          - read fields as $json.body.name,
+            $json.body.number, $json.body.discount
+            (instead of $json.query.*)
+        */
 
         fetch(
-          N8N_WEBHOOK_URL + '?' + webhookParams.toString(),
+          N8N_WEBHOOK_URL,
           {
-            method:'GET'
+            method:'POST',
+            headers:{
+              'Content-Type':'application/json'
+            },
+            body: JSON.stringify({
+              name: customerName,
+              number: customerNumber,
+              discount: seg.label.split('\n')[0]
+            })
           }
         ).catch(()=>{});
 
